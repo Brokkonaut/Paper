@@ -6,7 +6,7 @@ Subject: [PATCH] Optimise collision checking in player move packet handling
 Move collision logic to just the hasNewCollision call instead of getCubes + hasNewCollision
 
 diff --git a/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 08aba415735733f5968fd032ab7ca249cdcf6cde..ee4397711625344622c81424afd11fd6d967efba 100644
+index 9525244d92f4794d8f93195fc53a47d1d2e17831..a7f62145f75a45d27d32db6cb13a74ad3affd908 100644
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 @@ -606,6 +606,7 @@ public class ServerGamePacketListenerImpl
@@ -42,7 +42,7 @@ index 08aba415735733f5968fd032ab7ca249cdcf6cde..ee4397711625344622c81424afd11fd6
                      rootVehicle.absSnapTo(x, y, z, f, f1);
                      this.send(ClientboundMoveVehiclePacket.fromEntity(rootVehicle));
                      rootVehicle.removeLatestMovementRecording();
-@@ -701,9 +711,32 @@ public class ServerGamePacketListenerImpl
+@@ -697,9 +707,32 @@ public class ServerGamePacketListenerImpl
      }
  
      private boolean noBlocksAround(Entity entity) {
@@ -78,7 +78,7 @@ index 08aba415735733f5968fd032ab7ca249cdcf6cde..ee4397711625344622c81424afd11fd6
      }
  
      @Override
-@@ -1479,7 +1512,7 @@ public class ServerGamePacketListenerImpl
+@@ -1475,7 +1508,7 @@ public class ServerGamePacketListenerImpl
                                      }
                                  }
  
@@ -87,7 +87,7 @@ index 08aba415735733f5968fd032ab7ca249cdcf6cde..ee4397711625344622c81424afd11fd6
                                  d3 = d - this.lastGoodX; // Paper - diff on change, used for checking large move vectors above
                                  d4 = d1 - this.lastGoodY; // Paper - diff on change, used for checking large move vectors above
                                  d5 = d2 - this.lastGoodZ; // Paper - diff on change, used for checking large move vectors above
-@@ -1518,6 +1551,7 @@ public class ServerGamePacketListenerImpl
+@@ -1514,6 +1547,7 @@ public class ServerGamePacketListenerImpl
                                  boolean flag1 = this.player.verticalCollisionBelow;
                                  this.player.move(MoverType.PLAYER, new Vec3(d3, d4, d5));
                                  this.player.onGround = packet.isOnGround(); // CraftBukkit - SPIGOT-5810, SPIGOT-5835, SPIGOT-6828: reset by this.player.move
@@ -95,7 +95,7 @@ index 08aba415735733f5968fd032ab7ca249cdcf6cde..ee4397711625344622c81424afd11fd6
                                  // Paper start - prevent position desync
                                  if (this.awaitingPositionFromClient != null) {
                                      return; // ... thanks Mojang for letting move calls teleport across dimensions.
-@@ -1550,7 +1584,17 @@ public class ServerGamePacketListenerImpl
+@@ -1546,7 +1580,17 @@ public class ServerGamePacketListenerImpl
                                  }
  
                                  // Paper start - Add fail move event
@@ -114,7 +114,7 @@ index 08aba415735733f5968fd032ab7ca249cdcf6cde..ee4397711625344622c81424afd11fd6
                                  if (!allowMovement) {
                                      io.papermc.paper.event.player.PlayerFailMoveEvent event = fireFailMove(io.papermc.paper.event.player.PlayerFailMoveEvent.FailReason.CLIPPED_INTO_BLOCK,
                                              toX, toY, toZ, toYaw, toPitch, false);
-@@ -1686,7 +1730,7 @@ public class ServerGamePacketListenerImpl
+@@ -1682,7 +1726,7 @@ public class ServerGamePacketListenerImpl
  
      private boolean updateAwaitingTeleport() {
          if (this.awaitingPositionFromClient != null) {
@@ -123,7 +123,7 @@ index 08aba415735733f5968fd032ab7ca249cdcf6cde..ee4397711625344622c81424afd11fd6
                  this.awaitingTeleportTime = this.tickCount;
                  this.teleport(
                      this.awaitingPositionFromClient.x,
-@@ -1705,6 +1749,33 @@ public class ServerGamePacketListenerImpl
+@@ -1701,6 +1745,33 @@ public class ServerGamePacketListenerImpl
          }
      }
  
