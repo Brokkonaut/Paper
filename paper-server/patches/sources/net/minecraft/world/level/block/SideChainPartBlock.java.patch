@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/level/block/SideChainPartBlock.java
++++ b/net/minecraft/world/level/block/SideChainPartBlock.java
+@@ -65,14 +_,22 @@
+                 int i1 = neighbors.right().isConnectable() ? this.getAllBlocksConnectedTo(level, neighbors.right().pos()).size() : 0;
+                 int i2 = 1;
+                 if (this.canConnect(i, i2)) {
+-                    sideChainPart = sideChainPart.whenConnectedToTheLeft();
+-                    neighbors.left().connectToTheRight();
+-                    i2 += i;
++                    // Paper start - call BlockConnectEvent
++                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockConnectEvent(level, pos, neighbors.left().pos())) {
++                        sideChainPart = sideChainPart.whenConnectedToTheLeft();
++                        neighbors.left().connectToTheRight();
++                        i2 += i;
++                    }
++                    // Paper end - call BlockConnectEvent
+                 }
+ 
+                 if (this.canConnect(i1, i2)) {
+-                    sideChainPart = sideChainPart.whenConnectedToTheRight();
+-                    neighbors.right().connectToTheLeft();
++                    // Paper start - call BlockConnectEvent
++                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockConnectEvent(level, pos, neighbors.right().pos())) {
++                        sideChainPart = sideChainPart.whenConnectedToTheRight();
++                        neighbors.right().connectToTheLeft();
++                    }
++                    // Paper end - call BlockConnectEvent
+                 }
+ 
+                 this.setPart(level, pos, sideChainPart);

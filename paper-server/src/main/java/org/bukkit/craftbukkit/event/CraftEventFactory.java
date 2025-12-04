@@ -11,6 +11,7 @@ import io.papermc.paper.connection.HorriblePlayerLoginEventHack;
 import io.papermc.paper.connection.PlayerConnection;
 import io.papermc.paper.event.connection.PlayerConnectionValidateLoginEvent;
 import io.papermc.paper.event.entity.ItemTransportingEntityValidateTargetEvent;
+import io.papermc.paper.event.block.SideChainBlockConnectEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -1389,6 +1390,11 @@ public class CraftEventFactory {
         BlockRedstoneEvent event = new BlockRedstoneEvent(CraftBlock.at(level, pos), oldCurrent, newCurrent); // todo normalize newCurrent change outcome
         event.callEvent();
         return event;
+    }
+
+    public static boolean callBlockConnectEvent(LevelAccessor level, BlockPos pos, BlockPos connectToPos) {
+        BlockConnectEvent event = new BlockConnectEvent(CraftBlock.at(level, pos), CraftBlock.at(level, connectToPos));
+        return event.callEvent();
     }
 
     public static NotePlayEvent callNotePlayEvent(Level world, BlockPos pos, NoteBlockInstrument instrument, int note) {
